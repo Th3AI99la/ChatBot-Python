@@ -11,7 +11,14 @@ def send_message(message_chat):
         messages=[{"role": "user", "content": message_chat}],
     )
 
-    return response["choices"][0]["message"]
+    return response["choices"][0]["message"]["content"]
 
 
-print(send_message("Em que ano o Brasil foi descoberto?"))
+while True:
+    text = input("Escreva aqui sua mensagem:")
+
+    if text == "sair":
+        break
+    else:
+        response = send_message(text)
+        print("Chatbot:", response)
