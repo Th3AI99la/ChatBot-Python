@@ -1,24 +1,43 @@
 import openai
+from dotenv import load_dotenv
+import os
 
-keyAPI = "a"
+# Carregue variáveis de ambiente do arquivo key.env
+load_dotenv("key.env")
 
-openai.api_key = keyAPI
+# Use a chave de API carregada do arquivo key.env
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 def send_message(message_chat):
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": message_chat}],
-    )
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": message_chat}],
+        )
+        return response["choices"][0]["message"]
+    except Exception as e:
+        print(f"Erro ao interagir com a API: {e}")
+        return None
 
-    return response["choices"][0]["message"]
+
+def main():
+    print("\nBem-vindo ao Chatbot interativo! Digite 'sair' para encerrar.")
+
+    while True:
+        user_input = input("Você: ")
+
+        if user_input.lower() == "sair":
+            print("Até logo!")
+            break
+
+        response = send_message(user_input)
+
+        if response:
+            print("Chatbot:", response)
+        else:
+            print("Algo deu errado. Por favor, tente novamente.")
 
 
-while True:
-    text = input("Escreva aqui sua mensagem:")
-
-    if text == "sair":
-        break
-    else:
-        response = send_message(text)
-        print("Chatbot:", response)
+if __name__ == "__main__":
+    main()
